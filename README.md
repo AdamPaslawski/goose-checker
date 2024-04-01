@@ -1,2 +1,4 @@
+![test](assets/goose_checker.svg)
+
 # goose-checker
-Last line of defense against being a Silly Goose
+Military Grade Silly Goose Detection

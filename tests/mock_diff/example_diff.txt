@@ -1,0 +1,22 @@
+diff --git a/tests/name_only_diff.txt b/tests/name_only_diff.txt
+index cd9a609..1d4f15b 100644
+--- a/tests/name_only_diff.txt
++++ b/tests/name_only_diff.txt
+@@ -1 +1 @@
+-goose_checker/cli.py
+\ No newline at end of file
++tests/test_diff.py
+\ No newline at end of file
+diff --git a/tests/test_diff.py b/tests/test_diff.py
+index 9102478..6302770 100644
+--- a/tests/test_diff.py
++++ b/tests/test_diff.py
+@@ -36,5 +36,4 @@ def test_get_git_diffs():
+ 
+         for diff in diffs:
+             assert diff.diff == _get_diff_for_file(diff.file_name, with_respect_to)
+-    
+-    assert True
+\ No newline at end of file
++    
+\ No newline at end of file
