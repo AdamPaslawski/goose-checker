@@ -1,6 +1,4 @@
-![test](assets/goose_checker.svg)
-
-https://github.com/AdamPaslawski/goose-checker
+![goose checker logo](https://raw.githubusercontent.com/AdamPaslawski/goose-checker/main/assets/goose_checker.svg)
 
 # goose-checker
 Military Grade Silly Goose Detection
