@@ -55,6 +55,9 @@ def cli_main():
 
     args = parser.parse_args()
 
+    print(f"Checking for geese by comparing to {args.branch}")
+    print(f"Using model: {args.model} provided by {args.provider}")
+
     if args.provider == "azure":
         goose_checker = AzureGooseChecker(
             with_respect_to=args.branch, deployment_name=args.model
