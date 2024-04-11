@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "goose-checker"
-version = "0.1.0"
-description = ""
-authors = ["apaslaw <adam.paslawski@morningstar.com>"]
+version = "0.0.1"
+description = "State of the Art Silly Goose Detection Technology"
+authors = ["AdamPaslawski <adampaslawski@gmail.com>"]
 readme = "README.md"
 packages = [{include = "goose_checker"}]
 

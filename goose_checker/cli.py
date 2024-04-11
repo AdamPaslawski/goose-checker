@@ -1,5 +1,6 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 
 from dotenv import load_dotenv
 
@@ -11,7 +12,6 @@ from goose_checker.models import (AzureGooseChecker, GooseCheckerResponse,
                                   OpenAIGooseChecker)
 
 
-# Function to decide and run the appropriate checker
 def run_checker(diff, goose_checker):
     if diff.file_name.endswith(".tf"):
         return terraform_checker(diff=diff, goose_checker=goose_checker)
@@ -34,13 +34,13 @@ def cli_main():
     parser.add_argument(
         "--branch",
         nargs="?",
-        default="main",
+        default=os.environ.get("GOOSE_CHECKER_BRANCH_NAME", "main"),
         help="The branch or commit to compare against",
     )
     parser.add_argument(
         "--model",
         nargs="?",
-        default="gpt-3.5-turbo",
+        default=os.environ.get("GOOSE_CHECKER_MODEL_NAME", "gpt-3.5-turbo"),
         help="LLM model to use, for Azure instances this is the deployment ID.",
     )
 
@@ -48,7 +48,7 @@ def cli_main():
     parser.add_argument(
         "--provider",
         nargs="?",
-        default="openai",
+        default=os.environ.get("GOOSE_CHECKER_PROVIDER","openai"),
         choices=supported_providers,
         help=f"The cloud provider to use, choices are: {supported_providers}",
     )
@@ -98,7 +98,7 @@ def cli_main():
     else:
         print("Approved! No Geese detected.")
 
-    return approved ,
+    return approved
 
 
 if __name__ == "__main__":

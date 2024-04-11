@@ -2,8 +2,9 @@ name: Publish Python 🐍 package to PyPI
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main # This triggers the workflow on pushes to main.
+
 
 jobs:
   build-and-publish:
