@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "goose-checker"
-version = "0.0.1"
+version = "0.0.4"
 description = "State of the Art Silly Goose Detection Technology"
 authors = ["AdamPaslawski <adampaslawski@gmail.com>"]
 readme = "README.md"
