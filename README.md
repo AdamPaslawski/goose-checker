@@ -3,6 +3,13 @@
 # goose-checker
 Military Grade Silly Goose Detection
 
+# Quick Start
+Navigate to a git repository on your machine
+```
+export OPENAI_API_KEY=your-api-key-goes-here
+goose-checker
+```
+
 
 # Setup
 
