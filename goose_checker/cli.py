@@ -101,7 +101,8 @@ def main(config: AppConfig):
     approved, explanation = approve_or_deny(all_responses, goose_checker)
 
     if not approved:
-        print("Geese detected:")
+        print(goose_ascii)
+        print(detected_ascii)
         print(explanation)
         return approved
     else:
@@ -117,4 +118,5 @@ def cli_main():
 
 if __name__ == "__main__":
     load_dotenv()
-    cli_main()
+    config = AppConfig()
+    main(config)

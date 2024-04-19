@@ -136,7 +136,7 @@ def terraform_checker(
 def approve_or_deny(
     responses: list[GooseCheckerResponse], goose_checker: GooseChecker
 ) -> tuple[bool, str]:
-    response_schemas = [approve_or_deny_schema, silly_mistakes_aggregation_schema]
+    response_schemas = [silly_mistakes_aggregation_schema, approve_or_deny_schema]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()

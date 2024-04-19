@@ -36,6 +36,10 @@ def get_git_diffs(with_respect_to: str) -> list[GitDiff]:
     files_with_diff = get_all_files_with_diff(with_respect_to)
     diffs = []
     for file in files_with_diff:
-        diff = _get_diff_for_file(file, with_respect_to)
+        try:
+            diff = _get_diff_for_file(file, with_respect_to)
+        except subprocess.CalledProcessError:
+            print(f"Failed to get diff for {file}")
+            continue
         diffs.append(GitDiff(file_name=file, diff=diff))
     return diffs
