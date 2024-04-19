@@ -33,11 +33,10 @@ def run_checker(diff, goose_checker: GooseChecker):
 
 def display_issues(responses: list[GooseCheckerResponse]):
     for response in responses:
-        if response.silly_mistakes:  # Checks if silly_mistakes is not empty
+        if response.chain_of_thought:  # Checks if silly_mistakes is not empty
             print("\n")
             print(f"File Name: {response.file_name}")
-            print(f"Silly Mistakes: {response.silly_mistakes}")
-            print(f"Other Issues: {response.other_issues}")
+            print(f"Feedback: {response.chain_of_thought}")
             print("\n")
 
 
