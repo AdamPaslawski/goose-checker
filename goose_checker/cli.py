@@ -1,4 +1,5 @@
 import argparse
+import warnings
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -61,6 +62,8 @@ def parse_args() -> AppConfig:
     return AppConfig(**vars(args))
 
 def main(config: AppConfig):
+    
+    warnings.filterwarnings("ignore", message="Importing verbose from langchain root module is no longer supported")
     print(f"Checking for geese by comparing to {config.branch}")
     print(f"Using model: {config.model} provided by {config.provider}")
 
@@ -76,6 +79,10 @@ def main(config: AppConfig):
         raise ValueError(f"Provider specified not supported: {config.provider}")
 
     diffs = get_git_diffs(with_respect_to=config.branch)
+    
+    print("Checking these files for geese-like behaviour...")
+    for diff in diffs:
+        print(f"{diff.file_name}")
 
     if len(diffs) == 0:
         print(
