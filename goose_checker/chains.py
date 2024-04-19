@@ -4,13 +4,14 @@ from langchain.prompts import PromptTemplate
 
 from goose_checker.context import TerraformContext, get_terraform_context
 from goose_checker.diff import GitDiff
-from goose_checker.models import GooseChecker, GooseCheckerResponse
-from goose_checker.prompts import (aggregation_prompt, base_prompt,
-                                   terraform_prompt)
-from goose_checker.response_schema import (approve_or_deny_schema,
-                                           other_issues_explanation_schema,
-                                           silly_mistakes_explaination_schema,
-                                           silly_mistakes_aggregation_schema)
+from goose_checker.models import GooseChecker, GooseCheckerResponse, ApprovalChainResponse
+from goose_checker.prompts import aggregation_prompt, base_prompt, terraform_prompt
+from goose_checker.response_schema import (
+    approve_or_deny_schema,
+    cot_issues,
+    list_issues,
+    improvements_aggregation,
+)
 
 
 def get_token_len(string, model_name: str = "gpt-3.5-turbo"):
@@ -51,10 +52,8 @@ def _build_diff_subprompt(diff: GitDiff, quota: int) -> dict:
 def base_checker(diff: GitDiff, goose_checker: GooseChecker) -> GooseCheckerResponse:
 
     # Core chain to analyze terraform diff
-    response_schemas = [
-        silly_mistakes_explaination_schema,
-        other_issues_explanation_schema,
-    ]
+    response_schemas = [cot_issues,
+                        list_issues]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()
@@ -74,8 +73,8 @@ def base_checker(diff: GitDiff, goose_checker: GooseChecker) -> GooseCheckerResp
     output = chain.invoke({})
     return GooseCheckerResponse(
         file_name=diff.file_name,
-        silly_mistakes=output["silly_mistakes_explanation"],
-        other_issues=output["other_issues_explanation"],
+        chain_of_thought=output["chain_of_thought_on_issues"],
+        issues=output["list_issues"].split(","),
     )
 
 
@@ -84,10 +83,8 @@ def terraform_checker(
 ) -> GooseCheckerResponse:
 
     # Core chain to analyze terraform diff
-    response_schemas = [
-        silly_mistakes_explaination_schema,
-        other_issues_explanation_schema,
-    ]
+    response_schemas = [cot_issues,
+                        list_issues]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()
@@ -128,15 +125,15 @@ def terraform_checker(
     output = chain.invoke({})
     return GooseCheckerResponse(
         file_name=diff.file_name,
-        silly_mistakes=output["silly_mistakes_explanation"],
-        other_issues=output["other_issues_explanation"],
+        chain_of_thought=output["chain_of_thought_on_issues"],
+        issues=output["list_issues"].split(","),
     )
 
 
 def approve_or_deny(
     responses: list[GooseCheckerResponse], goose_checker: GooseChecker
-) -> tuple[bool, str]:
-    response_schemas = [silly_mistakes_aggregation_schema, approve_or_deny_schema]
+) -> ApprovalChainResponse:
+    response_schemas = [improvements_aggregation, approve_or_deny_schema]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()
@@ -146,7 +143,7 @@ def approve_or_deny(
     for response in responses:
         evaluations_subprompt = f"""
         file_name: {response.file_name}
-        silly_mistakes: {response.silly_mistakes}
+        Feedback: {response.chain_of_thought}
         """
 
     prompt_template = PromptTemplate.from_template(
@@ -161,4 +158,10 @@ def approve_or_deny(
 
     result = chain.invoke({})
 
-    return (result["approve_or_deny"], result["silly_mistakes"])
+    if isinstance(result['approve_or_deny'], str):
+        if result['approve_or_deny'].lower().strip() == "true":
+            result['approve_or_deny'] = True
+        elif result['approve_or_deny'].lower().strip() == "false":
+            result['approve_or_deny'] = False
+
+    return ApprovalChainResponse(approved = result["approve_or_deny"], instructions_to_engineer = result["instructions_to_engineer"])

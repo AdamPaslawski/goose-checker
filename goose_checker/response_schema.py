@@ -2,19 +2,19 @@ from langchain.output_parsers import ResponseSchema
 
 approve_or_deny_schema = ResponseSchema(
     name="approve_or_deny",
-    description="A boolean True or False to approve or deny.",
+    description="A boolean True or False to approve or deny the changes. A True to approve, False to deny.",
 )
-silly_mistakes_aggregation_schema = ResponseSchema(
-    name="silly_mistakes",
-    description="If there are any silly mistakes, explain clearly how to fix them here. Use numbered steps if possible.",
-)
-
-other_issues_explanation_schema = ResponseSchema(
-    name="other_issues_explanation",
-    description="A brief explanation. This is where you can include any other issues you find relating to performance or improving the code. If there are no other issues, you can leave this field blank.",
+improvements_aggregation = ResponseSchema(
+    name="instructions_to_engineer",
+    description="Write feedback to the engineer. If there are any mistakes or improvements include them here, explain clearly how to fix them. Use numbered steps if possible.",
 )
 
-silly_mistakes_explaination_schema = ResponseSchema(
-    name="silly_mistakes_explanation",
-    description="A brief explanation of any silly mistakes found in the code. If there are no silly mistakes, you can leave this field blank.",
+cot_issues = ResponseSchema(
+    name="chain_of_thought_on_issues",
+    description="Explain fully any issues you see in the code.",
+)
+
+list_issues = ResponseSchema(
+    name="list_issues",
+    description="based on your chain_of_thought on issues, list the issues you see in the code separate each issue with a comma.",
 )

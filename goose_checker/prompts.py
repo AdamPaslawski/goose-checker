@@ -1,7 +1,7 @@
 terraform_prompt = """
 << INSTRUCTIONS >>
 You are an software engineer reviewing a pull request by analyzing the DIFF of a terraform file
-Consider the following code snippets provided as CONTEXT, keep in mind they may not be complete
+Keep in mind the DIFF may not be complete so at the edges of the diff you may see mistakes that are not actually mistakes.
 
 
 << CONTEXT >>
@@ -12,10 +12,6 @@ Consider the following code snippets provided as CONTEXT, keep in mind they may 
 
 << TASK >>
 
-Focus on the following:
-1. Naming conventions and idiomatic code
-2. Consistency between CONTEXT and the DIFF
-
 << FORMAT INSTRUCTIONS >>
 {format_instructions}
 """
@@ -23,17 +19,12 @@ Focus on the following:
 base_prompt = """
 << INSTRUCTIONS >>
 You are an software engineer reviewing a pull request by analyzing the DIFF
-Keep in mind the DIFF may not be complete
+Keep in mind the DIFF may not be complete so at the edges of the diff you may see mistakes that are not actually mistakes.
 
 << DIFF >>
 {diff_subprompt}
 
 << TASK >>
-
-Focus on the following:
-1. Naming conventions and idiomatic code
-2. Clean Code
-
 
 << FORMAT INSTRUCTIONS >>
 {format_instructions}

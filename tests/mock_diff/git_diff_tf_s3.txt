@@ -17,4 +17,3 @@ index 0000000..0c73777
 +resource "aws_s3_bucket" "prod" {
 +  bucket = "dev"
 +}
-\ No newline at end of file

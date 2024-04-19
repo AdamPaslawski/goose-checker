@@ -17,9 +17,12 @@ class GooseChecker(BaseModel):
 
 class GooseCheckerResponse(BaseModel):
     file_name: str
-    silly_mistakes: str
-    other_issues: str
+    chain_of_thought: str
+    issues: list
 
+class ApprovalChainResponse(BaseModel):
+    approved: bool
+    instructions_to_engineer: str
 
 class OpenAIGooseChecker(GooseChecker):
     model: str
