@@ -14,9 +14,9 @@ from goose_checker.models import (AzureGooseChecker, GooseChecker,
 
 
 class AppConfig(BaseModel):
-    branch: str = os.environ.get("GOOSE_CHECKER_BRANCH_NAME", "main")
-    model: str = os.environ.get("GOOSE_CHECKER_MODEL_NAME", "gpt-3.5-turbo")
-    provider: str = os.environ.get("GOOSE_CHECKER_PROVIDER", "openai")
+    branch: str
+    model: str
+    provider: str
 
     class Config:
         env_file = ".env"
@@ -43,24 +43,22 @@ def display_issues(responses: list[GooseCheckerResponse]):
 def parse_args() -> AppConfig:
     parser = argparse.ArgumentParser(description="Checks if you goofed")
     parser.add_argument(
-        "--branch", nargs="?", help="The branch or commit to compare against"
+        "--branch", nargs="?", default=os.environ.get("GOOSE_CHECKER_BRANCH_NAME", "main"),
+        help="The branch or commit to compare against"
     )
     parser.add_argument(
-        "--model",
-        nargs="?",
-        help="LLM model to use, for Azure instances this is the deployment ID.",
+        "--model", nargs="?", default=os.environ.get("GOOSE_CHECKER_MODEL_NAME", "gpt-3.5-turbo"),
+        help="LLM model to use, for Azure instances this is the deployment ID."
     )
     supported_providers = ["azure", "openai"]
     parser.add_argument(
-        "--provider",
-        nargs="?",
-        choices=supported_providers,
-        help=f"The cloud provider to use, choices are: {supported_providers}",
+        "--provider", nargs="?", choices=supported_providers,
+        default=os.environ.get("GOOSE_CHECKER_PROVIDER", "openai"),
+        help=f"The cloud provider to use, choices are: {supported_providers}"
     )
 
     args = parser.parse_args()
-    return AppConfig(branch=args.branch, model=args.model, provider=args.provider)
-
+    return AppConfig(**vars(args))
 
 def main(config: AppConfig):
     print(f"Checking for geese by comparing to {config.branch}")
@@ -118,5 +116,9 @@ def cli_main():
 
 if __name__ == "__main__":
     load_dotenv()
-    config = AppConfig()
+    config = AppConfig(
+        branch=os.environ.get("GOOSE_CHECKER_BRANCH_NAME", "main"),
+        model=os.environ.get("GOOSE_CHECKER_MODEL_NAME", "gpt-3.5-turbo"),
+        provider=os.environ.get("GOOSE_CHECKER_PROVIDER", "openai"),
+    )
     main(config)
