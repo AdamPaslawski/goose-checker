@@ -3,6 +3,11 @@ terraform_prompt = """
 You are an software engineer reviewing a pull request by analyzing the DIFF of a terraform file
 Keep in mind the DIFF may not be complete so at the edges of the diff you may see mistakes that are not actually mistakes.
 
+Focus on the following:
+- Spelling Mistakes
+- Spelling consistencies
+- Silly Mistakes
+
 
 << CONTEXT >>
 {context_subprompt}
@@ -20,6 +25,11 @@ base_prompt = """
 << INSTRUCTIONS >>
 You are an software engineer reviewing a pull request by analyzing the DIFF
 Keep in mind the DIFF may not be complete so at the edges of the diff you may see mistakes that are not actually mistakes.
+
+Focus on the following:
+- Spelling Mistakes
+- Spelling consistencies
+- Silly Mistakes
 
 << DIFF >>
 {diff_subprompt}

@@ -1,6 +1,7 @@
 import os
 
-from goose_checker.chains import terraform_checker, base_checker, approve_or_deny
+from goose_checker.chains import (approve_or_deny, base_checker,
+                                  terraform_checker)
 from goose_checker.diff import GitDiff
 from goose_checker.models import AzureGooseChecker, GooseCheckerResponse
 from tests.conftest import temporary_change_dir
@@ -44,10 +45,12 @@ def test_goose_detector_secret():
 
 
 def test_approval_chain():
-    
+
     responses = [
         GooseCheckerResponse(
-            file_name="dev/s3.tf", chain_of_thought="1. In line 776, there is a missing closing square bracket ']' after the first 'arn' value.\n2. In line 792, there is a typo in the 'arn' value, 'md-api-db-useame' should be 'md-api-db-username'.", issues=["Missing closing square bracket", " Typo in 'arn' value"]
+            file_name="dev/s3.tf",
+            chain_of_thought="1. In line 776, there is a missing closing square bracket ']' after the first 'arn' value.\n2. In line 792, there is a typo in the 'arn' value, 'md-api-db-useame' should be 'md-api-db-username'.",
+            issues=["Missing closing square bracket", " Typo in 'arn' value"],
         )
     ]
     result = approve_or_deny(
