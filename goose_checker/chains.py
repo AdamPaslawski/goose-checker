@@ -1,17 +1,17 @@
 import tiktoken
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from langchain.prompts import PromptTemplate
+from tenacity import retry, stop_after_attempt
 
 from goose_checker.context import TerraformContext, get_terraform_context
 from goose_checker.diff import GitDiff
-from goose_checker.models import GooseChecker, GooseCheckerResponse, ApprovalChainResponse
-from goose_checker.prompts import aggregation_prompt, base_prompt, terraform_prompt
-from goose_checker.response_schema import (
-    approve_or_deny_schema,
-    cot_issues,
-    list_issues,
-    improvements_aggregation,
-)
+from goose_checker.models import (ApprovalChainResponse, GooseChecker,
+                                  GooseCheckerResponse)
+from goose_checker.prompts import (aggregation_prompt, base_prompt,
+                                   terraform_prompt)
+from goose_checker.response_schema import (approve_or_deny_schema, cot_issues,
+                                           improvements_aggregation,
+                                           list_issues)
 
 
 def get_token_len(string, model_name: str = "gpt-3.5-turbo"):
@@ -49,11 +49,11 @@ def _build_diff_subprompt(diff: GitDiff, quota: int) -> dict:
     return {"subprompt": subprompt, "tokens_used": tokens_used}
 
 
+@retry(stop=stop_after_attempt(2))
 def base_checker(diff: GitDiff, goose_checker: GooseChecker) -> GooseCheckerResponse:
 
     # Core chain to analyze terraform diff
-    response_schemas = [cot_issues,
-                        list_issues]
+    response_schemas = [cot_issues, list_issues]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()
@@ -78,13 +78,13 @@ def base_checker(diff: GitDiff, goose_checker: GooseChecker) -> GooseCheckerResp
     )
 
 
+@retry(stop=stop_after_attempt(2))
 def terraform_checker(
     diff: GitDiff, goose_checker: GooseChecker
 ) -> GooseCheckerResponse:
 
     # Core chain to analyze terraform diff
-    response_schemas = [cot_issues,
-                        list_issues]
+    response_schemas = [cot_issues, list_issues]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
     model = goose_checker._get_model()
@@ -158,10 +158,13 @@ def approve_or_deny(
 
     result = chain.invoke({})
 
-    if isinstance(result['approve_or_deny'], str):
-        if result['approve_or_deny'].lower().strip() == "true":
-            result['approve_or_deny'] = True
-        elif result['approve_or_deny'].lower().strip() == "false":
-            result['approve_or_deny'] = False
+    if isinstance(result["approve_or_deny"], str):
+        if result["approve_or_deny"].lower().strip() == "true":
+            result["approve_or_deny"] = True
+        elif result["approve_or_deny"].lower().strip() == "false":
+            result["approve_or_deny"] = False
 
-    return ApprovalChainResponse(approved = result["approve_or_deny"], instructions_to_engineer = result["instructions_to_engineer"])
+    return ApprovalChainResponse(
+        approved=result["approve_or_deny"],
+        instructions_to_engineer=result["instructions_to_engineer"],
+    )
