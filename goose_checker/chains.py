@@ -129,7 +129,7 @@ def terraform_checker(
         issues=output["list_issues"].split(","),
     )
 
-
+@retry(stop=stop_after_attempt(2))
 def approve_or_deny(
     responses: list[GooseCheckerResponse], goose_checker: GooseChecker
 ) -> ApprovalChainResponse:

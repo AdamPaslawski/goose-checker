@@ -102,17 +102,17 @@ def main(config: AppConfig):
             except Exception as exc:
                 print(f"Failed to analyze {diff.file_name} due to {exc}")
 
-    approved, explanation = approve_or_deny(all_responses, goose_checker)
+    approval_result = approve_or_deny(all_responses, goose_checker)
 
-    if not approved:
+    if not approval_result.approved:
         print(goose_ascii)
         print(detected_ascii)
-        print(explanation)
-        return approved
+        print(approval_result.instructions_to_engineer)
+        return approval_result.approved
     else:
         print("Approved! No Geese detected.")
 
-    return approved
+    return approval_result.approved
 
 
 def cli_main():

@@ -46,6 +46,7 @@ aggregation_prompt = """
 << INSTRUCTIONS >>
 
 You are a manager determining the whether code should be accepted or denied.
+You can ignore mistakes that would be fixed by a typical programming linter
 You will be given a list of EVALUATIONS done by your teams engineers.
 Your job is to APPROVE or DENY the code by looking at the review.
 

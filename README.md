@@ -31,7 +31,7 @@ See your options in the command line.
 
 ### a. Azure Model Users
 If you are using Azure as your provider your API key must be set as
-`AZURE_OPENAI_API_API_KEY=your-key-here`
+`AZURE_OPENAI_APIssobviousspellingmistake-deny-this_KEY=your-key-here`
 
 #### b. OpenAI Model Users
 If you are using OpenAI as your provider your API key must be set as
